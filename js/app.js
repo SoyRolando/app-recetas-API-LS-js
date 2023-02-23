@@ -53,7 +53,7 @@ function iniciarApp() {
 
         const heading = document.createElement('H2');
         heading.classList.add('text-center', 'text-black', 'my-5');
-        heading.textContent = recetas.length > 0 ? 'Resultados:' : 'No hay resultados';
+        heading.textContent = recetas.length ? 'Resultados:' : 'No hay resultados';
         resultado.appendChild(heading);
 
         recetas.forEach(receta => {
@@ -158,7 +158,6 @@ function iniciarApp() {
         modalBody.appendChild(listGoup);
 
         const modalFooter = document.querySelector('.modal-footer');
-
         limpiarHTML(modalFooter);
 
         //TODO Botones de Cerrar y Favorito
@@ -171,9 +170,7 @@ function iniciarApp() {
         cerrarBtn.textContent = 'Cerrar';
         cerrarBtn.onclick = () => modal.hide(); // Usa el prototype de Modal y la propiedad de 'hide' para ocular el modal
 
-        modalFooter.appendChild(favoritoBtn);
-        modalFooter.appendChild(cerrarBtn);
-
+        
         //TODO LocalStorage
         favoritoBtn.onclick = () => {
 
@@ -192,6 +189,9 @@ function iniciarApp() {
             favoritoBtn.textContent = 'Eliminar Favorito';
             mostrarToast('Agregado Correctamente');
         }
+        
+        modalFooter.appendChild(favoritoBtn);
+        modalFooter.appendChild(cerrarBtn);
 
         //* Mostrar el modal
         modal.show();
@@ -211,6 +211,7 @@ function iniciarApp() {
         const favoritos = JSON.parse(localStorage.getItem('favoritos')) ?? [];
         const favoritosNew = favoritos.filter(favorito => favorito.id !== id);
         localStorage.setItem('favoritos', JSON.stringify(favoritosNew));
+        obtenerFavoritos();
     }
 
     function mostrarToast(mensaje) {
@@ -227,12 +228,12 @@ function iniciarApp() {
 
     function obtenerFavoritos() {
         const favoritos = JSON.parse(localStorage.getItem('favoritos')) ?? [];
-        console.log(favoritos);
         if(favoritos.length){
             mostrarRecetas(favoritos);
             return;
         }
 
+        limpiarHTML(resultado);
         const noFavoritos = document.createElement('P');
         noFavoritos.textContent = 'No hay Favoritos aún';
         noFavoritos.classList.add('fs-4', 'text-center', 'font-bold', 'mt-5');
